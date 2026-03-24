@@ -1,11 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import StarRating from "@/components/star-rating";
 
 export default function NewReviewPage() {
+  return (
+    <Suspense>
+      <NewReviewForm />
+    </Suspense>
+  );
+}
+
+function NewReviewForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookingId = searchParams.get("booking");

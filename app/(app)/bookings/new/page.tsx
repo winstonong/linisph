@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/types";
@@ -14,6 +14,14 @@ const SERVICE_OPTIONS = [
 ];
 
 export default function NewBookingPage() {
+  return (
+    <Suspense>
+      <NewBookingForm />
+    </Suspense>
+  );
+}
+
+function NewBookingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cleanerId = searchParams.get("cleaner");
