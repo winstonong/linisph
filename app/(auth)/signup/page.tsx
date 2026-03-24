@@ -54,7 +54,7 @@ function SignupForm() {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-2">
-          Join LinisPH
+          Join Pindo
         </h1>
         <p className="text-center text-gray-500 mb-8">
           Create your account to get started

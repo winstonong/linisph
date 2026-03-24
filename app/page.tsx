@@ -30,7 +30,7 @@ export default async function HomePage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between sticky top-0 z-50">
         <Link href="/" className="text-xl font-bold text-blue-600">
-          LinisPH
+          Pindo
         </Link>
         <div className="flex items-center gap-3">
           <Link
@@ -114,7 +114,7 @@ export default async function HomePage() {
       <section className="px-6 py-16">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-10">
-            How LinisPH works
+            How Pindo works
           </h2>
           <div className="grid sm:grid-cols-3 gap-8 text-center">
             <div>
@@ -168,7 +168,7 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="text-center text-sm text-gray-400 py-8 bg-gray-50">
-        LinisPH &copy; {new Date().getFullYear()} · Manila, Philippines
+        Pindo &copy; {new Date().getFullYear()} · Manila, Philippines
       </footer>
     </div>
   );

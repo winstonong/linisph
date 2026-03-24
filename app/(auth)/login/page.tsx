@@ -37,7 +37,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-2">Welcome back</h1>
         <p className="text-center text-gray-500 mb-8">
-          Log in to your LinisPH account
+          Log in to your Pindo account
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

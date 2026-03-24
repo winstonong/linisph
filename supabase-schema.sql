@@ -1,5 +1,5 @@
 -- =============================================
--- LinisPH Database Schema
+-- Pindo Database Schema
 -- Run this in Supabase SQL Editor (Dashboard > SQL Editor > New Query)
 -- =============================================
 

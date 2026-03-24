@@ -2,14 +2,14 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "LinisPH — Book Cleaners in Manila",
+  title: "Pindo — Get Anything Done in Manila",
   description:
-    "Find and book trusted cleaning services in Manila. Browse cleaners or post a job.",
+    "Post a task and get offers from trusted local taskers. Cleaning, handyman, moving, delivery and more.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "LinisPH",
+    title: "Pindo",
   },
 };
 
