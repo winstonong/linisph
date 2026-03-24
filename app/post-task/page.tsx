@@ -22,7 +22,6 @@ function PostTaskForm() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<"signup" | "login">("signup");
   const [user, setUser] = useState<any>(null);
 
@@ -99,13 +98,15 @@ function PostTaskForm() {
 
     if (user) {
       await postTask(user.id);
-    } else {
-      setShowAuth(true);
+      return;
     }
-  };
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
+    // Auth inline — sign up or log in, then post
+    if (!email || !password || (authMode === "signup" && !fullName)) {
+      setAuthError("Please fill in all account fields below");
+      return;
+    }
+
     setAuthError("");
     setAuthLoading(true);
 
@@ -124,7 +125,6 @@ function PostTaskForm() {
 
       if (data.user) {
         setUser(data.user);
-        setShowAuth(false);
         setAuthLoading(false);
         await postTask(data.user.id);
       }
@@ -142,7 +142,6 @@ function PostTaskForm() {
 
       if (data.user) {
         setUser(data.user);
-        setShowAuth(false);
         setAuthLoading(false);
         await postTask(data.user.id);
       }
@@ -320,136 +319,107 @@ function PostTaskForm() {
               Taskers can suggest their own price too
             </p>
           </div>
+
+          {/* Inline auth section — only shown if not logged in */}
+          {!user && (
+            <>
+              <hr className="border-gray-200" />
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-1 block">
+                  {authMode === "signup"
+                    ? "Create an account to post"
+                    : "Log in to post"}
+                </label>
+                <p className="text-xs text-gray-400 mb-3">
+                  {authMode === "signup"
+                    ? "Quick sign up — we just need a few details"
+                    : "Welcome back! Enter your credentials"}
+                </p>
+                <div className="space-y-3">
+                  {authMode === "signup" && (
+                    <input
+                      type="text"
+                      placeholder="Full name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className={inputClass}
+                    />
+                  )}
+                  <input
+                    type="email"
+                    placeholder="Email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputClass}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password (min 6 characters)"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    minLength={6}
+                    className={inputClass}
+                  />
+                </div>
+                <p className="text-center text-xs text-gray-500 mt-3">
+                  {authMode === "signup" ? (
+                    <>
+                      Already have an account?{" "}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode("login");
+                          setAuthError("");
+                        }}
+                        className="text-blue-600 font-medium"
+                      >
+                        Log in
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      New to Pindo?{" "}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode("signup");
+                          setAuthError("");
+                        }}
+                        className="text-blue-600 font-medium"
+                      >
+                        Sign up
+                      </button>
+                    </>
+                  )}
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         {error && (
           <p className="text-red-600 text-sm text-center mt-4">{error}</p>
         )}
+        {authError && (
+          <p className="text-red-600 text-sm text-center mt-2">{authError}</p>
+        )}
 
         {/* Post button */}
         <button
           onClick={handlePost}
-          disabled={!canSubmit || loading}
+          disabled={!canSubmit || loading || authLoading}
           className="w-full mt-8 mb-4 py-4 rounded-xl bg-emerald-600 text-white font-bold text-base hover:bg-emerald-700 disabled:opacity-40 transition"
         >
-          {loading
+          {loading || authLoading
             ? "Posting..."
             : user
               ? "Post task"
-              : "Post task — sign up in seconds"}
+              : authMode === "signup"
+                ? "Sign up & post task"
+                : "Log in & post task"}
         </button>
-
-        {!user && (
-          <p className="text-center text-xs text-gray-400 mb-8">
-            You&apos;ll create a free account to track your task
-          </p>
-        )}
       </div>
-
-      {/* Auth modal overlay */}
-      {showAuth && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
-          <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 animate-in slide-in-from-bottom">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold">
-                {authMode === "signup"
-                  ? "Create your account"
-                  : "Welcome back"}
-              </h2>
-              <button
-                onClick={() => setShowAuth(false)}
-                className="text-gray-400 hover:text-gray-600 text-xl"
-              >
-                &times;
-              </button>
-            </div>
-
-            <p className="text-sm text-gray-500 mb-4">
-              {authMode === "signup"
-                ? "Quick sign up to post your task"
-                : "Log in to post your task"}
-            </p>
-
-            <form onSubmit={handleAuth} className="space-y-3">
-              {authMode === "signup" && (
-                <input
-                  type="text"
-                  placeholder="Full name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                  className={inputClass}
-                />
-              )}
-              <input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={inputClass}
-              />
-              <input
-                type="password"
-                placeholder="Password (min 6 characters)"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className={inputClass}
-              />
-
-              {authError && (
-                <p className="text-red-600 text-sm text-center">{authError}</p>
-              )}
-
-              <button
-                type="submit"
-                disabled={authLoading}
-                className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 transition"
-              >
-                {authLoading
-                  ? authMode === "signup"
-                    ? "Creating account..."
-                    : "Logging in..."
-                  : authMode === "signup"
-                    ? "Sign up & post task"
-                    : "Log in & post task"}
-              </button>
-            </form>
-
-            <p className="text-center text-sm text-gray-500 mt-4">
-              {authMode === "signup" ? (
-                <>
-                  Already have an account?{" "}
-                  <button
-                    onClick={() => {
-                      setAuthMode("login");
-                      setAuthError("");
-                    }}
-                    className="text-blue-600 font-medium"
-                  >
-                    Log in
-                  </button>
-                </>
-              ) : (
-                <>
-                  New to Pindo?{" "}
-                  <button
-                    onClick={() => {
-                      setAuthMode("signup");
-                      setAuthError("");
-                    }}
-                    className="text-blue-600 font-medium"
-                  >
-                    Sign up
-                  </button>
-                </>
-              )}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
