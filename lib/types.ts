@@ -1,5 +1,15 @@
 export type UserRole = "customer" | "cleaner";
 
+export interface Category {
+  id: number;
+  slug: string;
+  name: string;
+  icon: string;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+}
+
 export interface Profile {
   id: string;
   role: UserRole;
@@ -14,6 +24,9 @@ export interface Profile {
   rating_avg: number | null;
   rating_count: number;
   is_available: boolean;
+  total_tasks_completed: number;
+  completion_rate: number;
+  category_slugs: string[] | null;
   created_at: string;
 }
 
@@ -36,33 +49,37 @@ export interface Booking {
   notes: string | null;
   created_at: string;
   updated_at: string;
-  // Joined
   cleaner?: Profile;
   customer?: Profile;
 }
 
-export type JobStatus = "open" | "assigned" | "completed" | "cancelled";
+export type TaskStatus = "open" | "assigned" | "completed" | "cancelled";
 
-export interface Job {
+export interface Task {
   id: string;
   customer_id: string;
   title: string;
   description: string | null;
   service_type: string;
+  category_slug: string | null;
   budget_min: number | null;
   budget_max: number | null;
   address: string;
   preferred_date: string;
   preferred_time: string | null;
-  status: JobStatus;
+  status: TaskStatus;
   assigned_cleaner_id: string | null;
   created_at: string;
-  // Joined
   customer?: Profile;
-  bids?: Bid[];
+  category?: Category;
+  bids?: Offer[];
 }
 
-export interface Bid {
+// Keep Job as alias for backward compatibility
+export type JobStatus = TaskStatus;
+export type Job = Task;
+
+export interface Offer {
   id: string;
   job_id: string;
   cleaner_id: string;
@@ -70,9 +87,11 @@ export interface Bid {
   message: string | null;
   status: "pending" | "accepted" | "rejected";
   created_at: string;
-  // Joined
   cleaner?: Profile;
 }
+
+// Keep Bid as alias for backward compatibility
+export type Bid = Offer;
 
 export interface Review {
   id: string;
@@ -83,7 +102,6 @@ export interface Review {
   rating: number;
   comment: string | null;
   created_at: string;
-  // Joined
   customer?: Profile;
 }
 

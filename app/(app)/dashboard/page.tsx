@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   const role = (user.user_metadata?.role as UserRole) || "customer";
   const name = user.user_metadata?.full_name || "there";
 
-  // Get recent bookings count
+  // Get active tasks/bookings count
   const { count: bookingCount } = await supabase
     .from("bookings")
     .select("*", { count: "exact", head: true })
@@ -25,13 +25,19 @@ export default async function DashboardPage() {
     )
     .in("status", ["pending", "confirmed"]);
 
+  const { count: taskCount } = await supabase
+    .from("jobs")
+    .select("*", { count: "exact", head: true })
+    .eq(role === "customer" ? "customer_id" : "assigned_cleaner_id", user.id)
+    .in("status", ["open", "assigned"]);
+
   return (
     <div className="px-6 pt-14">
       <h1 className="text-2xl font-bold mb-1">Hi, {name}! 👋</h1>
       <p className="text-gray-500 mb-8">
         {role === "customer"
-          ? "What would you like to get done today?"
-          : "Ready to find your next job?"}
+          ? "What do you need done today?"
+          : "Ready to find your next task?"}
       </p>
 
       {/* Quick actions */}
@@ -39,34 +45,34 @@ export default async function DashboardPage() {
         {role === "customer" ? (
           <>
             <Link
-              href="/cleaners"
-              className="bg-blue-600 text-white rounded-2xl p-5 flex flex-col gap-2 hover:bg-blue-700 transition"
+              href="/post-task"
+              className="bg-emerald-600 text-white rounded-2xl p-5 flex flex-col gap-2 hover:bg-emerald-700 transition"
             >
-              <span className="text-2xl">🔍</span>
-              <span className="font-semibold">Find a Cleaner</span>
-              <span className="text-xs text-blue-200">
-                Browse profiles & book
+              <span className="text-2xl">📝</span>
+              <span className="font-semibold">Post a Task</span>
+              <span className="text-xs text-emerald-200">
+                Get offers from taskers
               </span>
             </Link>
             <Link
-              href="/jobs/new"
-              className="bg-emerald-600 text-white rounded-2xl p-5 flex flex-col gap-2 hover:bg-emerald-700 transition"
+              href="/tasks"
+              className="bg-blue-600 text-white rounded-2xl p-5 flex flex-col gap-2 hover:bg-blue-700 transition"
             >
-              <span className="text-2xl">📋</span>
-              <span className="font-semibold">Post a Job</span>
-              <span className="text-xs text-emerald-200">
-                Get bids from cleaners
+              <span className="text-2xl">🔍</span>
+              <span className="font-semibold">Browse Tasks</span>
+              <span className="text-xs text-blue-200">
+                See what others need
               </span>
             </Link>
           </>
         ) : (
           <>
             <Link
-              href="/jobs"
+              href="/tasks"
               className="bg-emerald-600 text-white rounded-2xl p-5 flex flex-col gap-2 hover:bg-emerald-700 transition"
             >
-              <span className="text-2xl">📋</span>
-              <span className="font-semibold">Browse Jobs</span>
+              <span className="text-2xl">🔍</span>
+              <span className="font-semibold">Browse Tasks</span>
               <span className="text-xs text-emerald-200">
                 Find work near you
               </span>
@@ -76,40 +82,49 @@ export default async function DashboardPage() {
               className="bg-blue-600 text-white rounded-2xl p-5 flex flex-col gap-2 hover:bg-blue-700 transition"
             >
               <span className="text-2xl">📅</span>
-              <span className="font-semibold">My Bookings</span>
+              <span className="font-semibold">My Tasks</span>
               <span className="text-xs text-blue-200">
-                {bookingCount || 0} active
+                {(bookingCount || 0) + (taskCount || 0)} active
               </span>
             </Link>
           </>
         )}
       </div>
 
-      {/* Active bookings summary */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-100">
-        <h2 className="font-bold mb-3">Active Bookings</h2>
-        {bookingCount && bookingCount > 0 ? (
-          <p className="text-gray-600 text-sm">
-            You have {bookingCount} active booking
-            {bookingCount > 1 ? "s" : ""}.{" "}
-            <Link href="/bookings" className="text-blue-600 font-medium">
-              View all →
-            </Link>
-          </p>
-        ) : (
-          <p className="text-gray-400 text-sm">
-            No active bookings yet.{" "}
-            {role === "customer" ? (
-              <Link href="/cleaners" className="text-blue-600 font-medium">
-                Find a cleaner →
+      {/* Summary cards */}
+      <div className="space-y-3">
+        {(taskCount ?? 0) > 0 && (
+          <div className="bg-white rounded-2xl p-5 border border-gray-100">
+            <h2 className="font-bold mb-2">Active Tasks</h2>
+            <p className="text-gray-600 text-sm">
+              You have {taskCount} active task
+              {taskCount !== 1 ? "s" : ""}.{" "}
+              <Link href="/bookings" className="text-blue-600 font-medium">
+                View all →
               </Link>
-            ) : (
-              <Link href="/jobs" className="text-blue-600 font-medium">
-                Browse jobs →
-              </Link>
-            )}
-          </p>
+            </p>
+          </div>
         )}
+
+        <div className="bg-white rounded-2xl p-5 border border-gray-100">
+          <h2 className="font-bold mb-2">Active Bookings</h2>
+          {bookingCount && bookingCount > 0 ? (
+            <p className="text-gray-600 text-sm">
+              You have {bookingCount} active booking
+              {bookingCount > 1 ? "s" : ""}.{" "}
+              <Link href="/bookings" className="text-blue-600 font-medium">
+                View all →
+              </Link>
+            </p>
+          ) : (
+            <p className="text-gray-400 text-sm">
+              No active bookings yet.{" "}
+              <Link href="/tasks" className="text-blue-600 font-medium">
+                Browse tasks →
+              </Link>
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

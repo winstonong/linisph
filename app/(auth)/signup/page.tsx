@@ -71,7 +71,7 @@ function SignupForm() {
                 : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
             }`}
           >
-            🏠 I need cleaning
+            🏠 I need something done
           </button>
           <button
             type="button"
@@ -82,7 +82,7 @@ function SignupForm() {
                 : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
             }`}
           >
-            🧹 I&apos;m a cleaner
+            🛠️ I&apos;m a tasker
           </button>
         </div>
 
