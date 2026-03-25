@@ -72,6 +72,7 @@ export default function HomeSearch() {
     <div className="max-w-md mx-auto">
       {/* Currency picker */}
       <div className="flex items-center justify-center gap-1.5 mb-6">
+        <span className="text-sm text-blue-200 mr-1">See rates in</span>
         {Object.entries(EXCHANGE_RATES).map(([code, { label }]) => (
           <button
             key={code}
