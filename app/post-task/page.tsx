@@ -26,7 +26,7 @@ function PostTaskForm() {
   const [user, setUser] = useState<any>(null);
 
   // Task fields
-  const [categorySlug, setCategorySlug] = useState("");
+  const [categorySlug, setCategorySlug] = useState(searchParams.get("category") || "");
   const [title, setTitle] = useState(searchParams.get("title") || "");
   const [description, setDescription] = useState("");
   const [city, setCity] = useState("Manila");

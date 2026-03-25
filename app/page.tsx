@@ -1,19 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import CategoryGrid from "@/components/category-grid";
 import TaskCard from "@/components/task-card";
-import type { Category } from "@/lib/types";
 import HomeSearch from "./home-search";
 
 export default async function HomePage() {
   const supabase = await createClient();
-
-  // Fetch categories
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("is_active", true)
-    .order("display_order");
 
   // Fetch recent open tasks (public)
   const { data: recentTasks } = await supabase
@@ -61,8 +52,7 @@ export default async function HomePage() {
             Get anything done in Manila
           </h1>
           <p className="text-blue-100 text-lg mb-8 max-w-lg mx-auto">
-            Post a task. Get offers from trusted local taskers. Pick the best
-            one. Done.
+            What do you need help with?
           </p>
 
           <HomeSearch />
@@ -73,19 +63,6 @@ export default async function HomePage() {
             <span>✓ Pay when done</span>
           </div>
         </div>
-      </section>
-
-      {/* Categories */}
-      <section className="px-6 py-12 max-w-3xl mx-auto w-full">
-        <h2 className="text-2xl font-bold text-center mb-2">
-          What do you need done?
-        </h2>
-        <p className="text-gray-500 text-center mb-8">
-          Browse popular categories or post your own task
-        </p>
-        {categories && (
-          <CategoryGrid categories={categories as Category[]} />
-        )}
       </section>
 
       {/* Recent Tasks */}

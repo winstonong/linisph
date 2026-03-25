@@ -1,38 +1,39 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+
+const HERO_CATEGORIES = [
+  { slug: "cleaning", label: "Cleaner (one-off)", icon: "🧹" },
+  { slug: "housekeeper", label: "Regular housekeeper", icon: "🏠" },
+  { slug: "handyman", label: "Handyman", icon: "🔧" },
+  { slug: "moving", label: "Mover", icon: "📦" },
+  { slug: "other", label: "Everything else", icon: "✨" },
+];
 
 export default function HomeSearch() {
   const router = useRouter();
-  const [query, setQuery] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      router.push(`/post-task?title=${encodeURIComponent(query.trim())}`);
-    } else {
-      router.push("/post-task");
-    }
+  const handlePick = (slug: string) => {
+    router.push(`/post-task?category=${encodeURIComponent(slug)}`);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
-      <div className="flex bg-white rounded-2xl overflow-hidden shadow-lg">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="e.g. Clean my 2BR condo in Makati"
-          className="flex-1 px-5 py-4 text-gray-900 text-base focus:outline-none"
-        />
+    <div className="max-w-md mx-auto space-y-3">
+      {HERO_CATEGORIES.map((cat) => (
         <button
-          type="submit"
-          className="px-6 py-4 bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition shrink-0"
+          key={cat.slug}
+          onClick={() => handlePick(cat.slug)}
+          className="w-full flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-left hover:bg-white/20 transition group"
         >
-          Post a task
+          <span className="text-2xl">{cat.icon}</span>
+          <span className="text-lg font-semibold text-white group-hover:translate-x-1 transition-transform">
+            {cat.label}
+          </span>
+          <span className="ml-auto text-white/50 group-hover:text-white/80 transition">
+            →
+          </span>
         </button>
-      </div>
-    </form>
+      ))}
+    </div>
   );
 }
