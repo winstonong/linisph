@@ -63,7 +63,17 @@ function PostTaskForm() {
 
   const canSubmit = categorySlug && title.trim() && address.trim();
 
-  const postTask = async (userId: string) => {
+  const sendEmail = async (payload: Record<string, any>) => {
+    try {
+      await fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch {}
+  };
+
+  const postTask = async (userId: string, userEmail?: string, userName?: string) => {
     setLoading(true);
     setError("");
 
@@ -90,6 +100,17 @@ function PostTaskForm() {
       return;
     }
 
+    // Send task-posted email (fire and forget)
+    if (userEmail) {
+      sendEmail({
+        type: "task_posted",
+        to: userEmail,
+        name: userName || "there",
+        taskTitle: title,
+        taskId: data.id,
+      });
+    }
+
     router.push(`/tasks/${data.id}`);
   };
 
@@ -97,7 +118,7 @@ function PostTaskForm() {
     if (!canSubmit) return;
 
     if (user) {
-      await postTask(user.id);
+      await postTask(user.id, user.email, user.user_metadata?.full_name);
       return;
     }
 
@@ -126,7 +147,9 @@ function PostTaskForm() {
       if (data.user) {
         setUser(data.user);
         setAuthLoading(false);
-        await postTask(data.user.id);
+        // Send welcome email for new signup
+        sendEmail({ type: "welcome", to: email, name: fullName });
+        await postTask(data.user.id, email, fullName);
       }
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -143,7 +166,7 @@ function PostTaskForm() {
       if (data.user) {
         setUser(data.user);
         setAuthLoading(false);
-        await postTask(data.user.id);
+        await postTask(data.user.id, data.user.email, data.user.user_metadata?.full_name);
       }
     }
   };
