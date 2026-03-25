@@ -249,31 +249,15 @@ function PostTaskForm() {
             </div>
           )}
 
-          {/* Title */}
+          {/* Description */}
           <div>
             <label className="text-sm font-semibold text-gray-700 mb-1 block">
               What do you need done?
             </label>
-            <input
-              type="text"
+            <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Deep clean my 2BR condo"
-              className={inputClass}
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="text-sm font-semibold text-gray-700 mb-1 block">
-              Details{" "}
-              <span className="font-normal text-gray-400">(optional)</span>
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              placeholder="Any specific requirements, number of rooms, special instructions..."
               className={inputClass}
             />
           </div>
